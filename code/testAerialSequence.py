@@ -1,9 +1,15 @@
+import cv2
 import argparse
 import numpy as np
+from numpy import typing as npt
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-# write your script here, we recommend all or some of the above libraries for making your animation
+from SubtractDominantMotion import SubtractDominantMotion
+
+from LucasKanadeAffine import LucasKanadeAffine, construct_M
+
+# write your script here, we recommend the above libraries for making your animation
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -22,17 +28,17 @@ parser.add_argument(
     help='binary threshold of intensity difference when computing the mask',
 )
 parser.add_argument(
-    '--seq',
+    '--seq_file',
     default='../data/aerialseq.npy',
 )
 
 args = parser.parse_args()
-num_iters = args.num_iters
+num_iters = int(args.num_iters)
 threshold = args.threshold
 tolerance = args.tolerance
-seq_file_path = args.seq
+seq_file = args.seq_file
 
-seq = np.load(seq_file_path)
+seq = np.load(seq_file)
 
 '''
 HINT:
@@ -41,3 +47,35 @@ HINT:
 3. Use the SubtractDominantMotion function to compute the motion mask between consecutive frames.
 4. Use the motion 'masks; array for visualization.
 '''
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+video = cv2.VideoWriter('AerialCarSeq.avi', fourcc, 15, (seq.shape[1], seq.shape[0]))
+
+
+masks = np.zeros(seq.shape, dtype=bool)
+
+for i in range(seq.shape[2]-1):
+    It = seq[:, :, i]
+    It1 = seq[:, :, i+1]
+    num_iters = 100
+
+    color_img = cv2.cvtColor((255 * It1).astype(np.uint8), cv2.COLOR_GRAY2BGR)
+    bin_mask = SubtractDominantMotion(It, It1, threshold, num_iters, tolerance, -5)
+    # color_mask = cv2.cvtColor((255 * bin_mask).astype(np.uint8), cv2.COLOR_GRAY2BGR)
+    full_mask = (255 * bin_mask).astype(np.uint8)
+    masked_cars = cv2.bitwise_and(color_img, color_img, mask=~full_mask)
+    solid_color = np.zeros((It.shape[0], It.shape[1], 3), np.uint8)
+    solid_color[:] = (0, 255, 255)
+    color_mask = cv2.bitwise_and(solid_color, solid_color, mask=full_mask)
+    # cv2.imshow("Color_Mask", color_mask)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    final_img = cv2.add(color_mask, masked_cars)
+    video.write(final_img)
+    # cv2.imshow("Color_Mask", final_img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+cv2.destroyAllWindows()
+video.release()
+
+

@@ -18,19 +18,22 @@ def SubtractDominantMotion(image1, image2, threshold, num_iters, tolerance, iter
     :return: mask: [nxm]
     """
 
-    p = LucasKanadeAffine(image1, image2, threshold, num_iters, iter_number)
-    M_t2t1 = construct_M(p)
+    if do_inverse_compositional:
+        M = InverseCompositionAffine(image1, image2, threshold, num_iters, iter_number)
+    else:
+        p = LucasKanadeAffine(image1, image2, threshold, num_iters, iter_number)
+        M = construct_M(p)
 
-    warped_im1 = cv2.warpAffine(image1, M_t2t1[:2, :], (image1.shape[1], image1.shape[0]))
+    warped_im1 = cv2.warpAffine(image1, M[:2, :], (image1.shape[1], image1.shape[0]))
     err_img = warped_im1 - image2
 
     mask = np.array(np.abs(err_img) > tolerance).astype(np.uint8)
 
-    if iter_number > 1:
-        cv2.imshow("Warped Image 1", warped_im1)
-        cv2.imshow("Image 2", image2)
-        cv2.imshow("Motion", mask)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+    # if iter_number > 1:
+    #     cv2.imshow("Warped Image 1", warped_im1)
+    #     cv2.imshow("Image 2", image2)
+    #     cv2.imshow("Motion", mask)
+    #     cv2.waitKey(0)
+    #     cv2.destroyAllWindows()
 
     return mask.astype(bool)
