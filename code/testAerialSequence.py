@@ -48,7 +48,7 @@ HINT:
 4. Use the motion 'masks; array for visualization.
 '''
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-video = cv2.VideoWriter('AerialCarSeq.avi', fourcc, 15, (seq.shape[1], seq.shape[0]))
+video = cv2.VideoWriter('../data/AerialCarSeq.avi', fourcc, 15, (seq.shape[1], seq.shape[0]))
 
 
 masks = np.zeros(seq.shape, dtype=bool)
