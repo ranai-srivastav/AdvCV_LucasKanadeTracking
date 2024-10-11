@@ -59,12 +59,12 @@ for i in range(seq.shape[2]-1):
     num_iters = 100
 
     color_img = cv2.cvtColor((255 * It1).astype(np.uint8), cv2.COLOR_GRAY2BGR)
-    bin_mask = SubtractDominantMotion(It, It1, threshold, num_iters, tolerance, -5)
+    bin_mask = SubtractDominantMotion(It, It1, threshold, num_iters, tolerance, do_inverse_compositional=True)
     # color_mask = cv2.cvtColor((255 * bin_mask).astype(np.uint8), cv2.COLOR_GRAY2BGR)
     full_mask = (255 * bin_mask).astype(np.uint8)
     masked_cars = cv2.bitwise_and(color_img, color_img, mask=~full_mask)
     solid_color = np.zeros((It.shape[0], It.shape[1], 3), np.uint8)
-    solid_color[:] = (0, 255, 255)
+    solid_color[:] = (255, 0, 255)
     color_mask = cv2.bitwise_and(solid_color, solid_color, mask=full_mask)
     # cv2.imshow("Color_Mask", color_mask)
     # cv2.waitKey(0)
@@ -74,6 +74,9 @@ for i in range(seq.shape[2]-1):
     # cv2.imshow("Color_Mask", final_img)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
+
+    if i in [30, 60, 90, 120]:
+        cv2.imwrite(f"../data/aerial_seq_invcomp{i}.jpg", final_img)
 
 cv2.destroyAllWindows()
 video.release()

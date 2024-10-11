@@ -8,7 +8,7 @@ from InverseCompositionAffine import InverseCompositionAffine
 from LucasKanadeAffine import warp_image
 
 
-def SubtractDominantMotion(image1, image2, threshold, num_iters, tolerance, iter_number=-1, do_inverse_compositional=False):
+def SubtractDominantMotion(image1, image2, threshold, num_iters, tolerance, do_inverse_compositional=False):
     """
     :param image1: Images at time t
     :param image2: Images at time t+1
@@ -19,9 +19,9 @@ def SubtractDominantMotion(image1, image2, threshold, num_iters, tolerance, iter
     """
 
     if do_inverse_compositional:
-        M = InverseCompositionAffine(image1, image2, threshold, num_iters, iter_number)
+        M = InverseCompositionAffine(image1, image2, threshold, num_iters)
     else:
-        p = LucasKanadeAffine(image1, image2, threshold, num_iters, iter_number)
+        p = LucasKanadeAffine(image1, image2, threshold, num_iters)
         M = construct_M(p)
 
     warped_im1 = cv2.warpAffine(image1, M[:2, :], (image1.shape[1], image1.shape[0]))

@@ -47,7 +47,7 @@ def get_inv_warp(p):
     return (det * new_p).squeeze(axis=1)
 
 
-def InverseCompositionAffine(It, It1, threshold, num_iters, iter_number=-1):
+def InverseCompositionAffine(It, It1, threshold, num_iters):
     """
     :param It: template image
     :param It1: Current image

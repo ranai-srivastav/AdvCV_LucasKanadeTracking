@@ -80,7 +80,7 @@ def get_interpolated_img(rbs, x_coords, y_coords):
     return interpolated_img
 
 
-def LucasKanadeAffine(It, It1, threshold, num_iters, iter_number=-1, p0=np.zeros([6, 1])):
+def LucasKanadeAffine(It, It1, threshold, num_iters, p0=np.zeros([6, 1])):
     """
     :param iter_number: Used for debugging only
     :param It: template image

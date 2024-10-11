@@ -2,7 +2,7 @@ import cv2
 import argparse
 import numpy as np
 from tqdm import tqdm
-from LucasKanadeRBS import LucasKanadeRBS, draw_rectangle, add_p_to_rect
+from LucasKanade import LucasKanade, draw_rectangle, add_p_to_rect
 
 # write your script here, we recommend the above libraries for making your animation
 
@@ -32,7 +32,7 @@ for i in tqdm(range(0, np.shape(seq)[2] - 1)):
     It = seq[:, :, i]
     It1 = seq[:, :, i + 1]
 
-    delta_p = LucasKanadeRBS(It, It1, rects[i], threshold, int(num_iters), i)
+    delta_p = LucasKanade(It, It1, rects[i], threshold, int(num_iters))
     # print(delta_p)
     rects[i+1, :] = np.array(add_p_to_rect(rects[i], delta_p)).reshape([1, 4])
     img = draw_rectangle(It1, rects[i][:2], rects[i][2:])

@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 from tqdm import tqdm
 
-from LucasKanadeRBS import LucasKanadeRBS, draw_rectangle, add_p_to_rect
+from LucasKanade import LucasKanade, draw_rectangle, add_p_to_rect
 
 
 parser = argparse.ArgumentParser()
@@ -32,7 +32,7 @@ for i in tqdm(range(1, np.shape(seq)[2])):
     It = seq[:, :, i-1]
     It1 = seq[:, :, i]
 
-    delta_p = LucasKanadeRBS(It, It1, rects[i-1], threshold, int(num_iters), i)
+    delta_p = LucasKanade(It, It1, rects[i-1], threshold, int(num_iters))
     rects[i] = np.array(add_p_to_rect(rects[i-1], delta_p)).reshape(1, 4)
     img = draw_rectangle(It1, rects[i][:2], rects[i][2:])
 
